@@ -72,19 +72,9 @@ resource "aws_instance" "jenkins" {
     sudo apt update
     sudo apt install -y jenkins
 
-    echo "Jenkins installed successfully... checking if service is running"
+    echo "Jenkins installed successfully..."
 
-    if systemctl is-active --quiet "$service_name"; then
-        echo "Your Admin password is: "
-        sudo cat /var/lib/jenkins/secrets/initialAdminPassword
-    else
-        echo "The $service_name service is not active."
-    fi
 
-    echo "adding firewall rules"
-
-    sudo ufw allow 8080/tcp
-    sudo ufw reload
   EOF
 }
 
