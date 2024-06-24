@@ -60,7 +60,7 @@ resource "aws_instance" "jenkins" {
     service_name="jenkins"
 
     sudo apt update
-    sudo apt install -y git fontconfig openjdk-17-jre docker.io
+    sudo apt install -y git fontconfig openjdk-17-jre docker.io python3.10-venv
 
     echo "Java and available updates installed"
 
