@@ -2,36 +2,50 @@ pipeline {
     agent any
     // @Library('shared-library') _
 
+    environment {
+        GIT_REPO_URL = 'https://github.com/pintop9/ecommerce-django-react.git'
+        GIT_BRANCH = 'main' // Change this if you're using a different branch
+    }
+
     stages {
-        stage('Pull from github') {
-          steps {
-            // Get contact app code from a GitHub repository
-            git 'https://github.com/pintop9/ecommerce-django-react.git'
-          }
+        stage('Pull from GitHub') {
+            steps {
+                script {
+                    try {
+                        git branch: GIT_BRANCH, url: GIT_REPO_URL
+                    } catch (Exception e) {
+                        echo "Failed to pull from GitHub: ${e.message}"
+                        error "Stopping the build."
+                    }
+                }
+            }
         }
 
-        stage('Build') {
-          steps {
-            // Build project on Jenkins server.
-            sh """
-            python3 -m venv .venv
-            . .venv/bin/activate
-            pip install -r requirements.txt
-            pip install pytest-html-reporter
-            python manage.py runserver & 
-            """//how to configure it to running on port 7000? (aws rule is 7000) and default is 8000
-          }
+stage('Build') {
+            steps {
+                // Build project on Jenkins server.
+                script {
+                    // Activate virtual environment and run commands
+                    sh '''
+                    cd backend
+                    python3 -m venv env
+                    . env/bin/activate
+                    pip install -r ../requirements.txt
+                    python ../manage.py runserver localhost:7000 &
+                '''
+                }
+            }
         }
 
-        stage('Runing Tests') {
-          steps {
-            // Run Python tests with pytest for unit/integration/e2e tests.
-            sh """
-            . .venv/bin/activate
-            pytest --html-report=./report.html
-            """
-
-          }
+        // stage('Running Tests') {
+        //     steps {
+        //         // Run Python tests with pytest for unit/integration/e2e tests.
+        //         sh """
+        //         . .venv/bin/activate
+        //         mkdir -p test-reports
+        //         pytest --html=test-reports/report.html
+        //         """
+          //  }
           // post {
           //   success {
           //   // One or more steps need to be included within each condition's block.
@@ -52,35 +66,13 @@ pipeline {
           //   }
           // }
 
-        }
-        stage('publish report'){
-            steps {
-                publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, keepAll: false, reportDir: '', reportFiles: 'report.html', reportName: 'Contacts Report', reportTitles: '', useWrapperFileDirectly: true]) 
-        
-                // junit stdioRetention: '', testResults: 'test.xml'
+       // }
+        // stage('publish report'){
+        //     steps {
+        //         publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, keepAll: false, reportDir: '', reportFiles: 'report.html', reportName: 'Contacts Report', reportTitles: '', useWrapperFileDirectly: true]) 
                 
-            }
-        }
-        // stage('report to jira'){
-        //     steps{
-        //         junit (
-        //          testResults: 'test.xml',
-        //          testDataPublishers: [
-        //           jiraTestResultReporter(
-        //              configs: [
-        //               jiraStringField(fieldKey: 'summary', value: '${DEFAULT_SUMMARY}'),
-        //               jiraStringField(fieldKey: 'description', value: '${DEFAULT_DESCRIPTION}'),
-        //               jiraStringArrayField(fieldKey: 'labels', values: [jiraArrayEntry(value: 'Jenkins'), jiraArrayEntry(value:'Integration')])
-        //              ],
-        //              projectKey: 'FDAP',
-        //              issueType: '1',
-        //              autoRaiseIssue: false,
-        //              autoResolveIssue: false,
-        //              autoUnlinkIssue: false,
-        //           )
-        //          ]
-        //         )    
         //     }
         // }
+
     }
 }

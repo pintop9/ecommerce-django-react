@@ -46,7 +46,7 @@ resource "aws_instance" "jenkins" {
   key_name      = "aws_tf"
 
   root_block_device {
-    volume_size           = 8
+    volume_size           = 30
     delete_on_termination = true 
   }
 
