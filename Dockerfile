@@ -5,10 +5,9 @@ ENV PYTHONUNBUFFERED=1
 WORKDIR /app
 COPY ./backend /app/backend
 RUN cd backend
-RUN ls -l env/Scripts
+RUN ls -l ./env/Scripts
 RUN /bin/bash -c 'python -m venv env'
 RUN /bin/bash -c 'source env/Scripts/activate && cd ..'
-
 COPY ./requirements.txt /app/requirements.txt
 COPY ./manage.py /app/manage.py
 COPY ./base /app/base
