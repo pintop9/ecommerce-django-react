@@ -61,6 +61,12 @@ stage('Build') {
           //                   description: 'Tests failed here',
           //                   issueTypeName: 'Bug'
           //               )
+                    // email
+                // emailext body: """The build status is ${currentBuild.currentResult}, on project ${env.JOB_NAME} find test report in this url: ${BUILD_URL}/My_20Contacts/""",
+                // subject: """You got a faild build/job ${env.JOB_NAME} - ${env.BUILD_NUMBER} from jenkins""", 
+                // to: 'gagi.shmagi@gmail.com'
+                
+                
           //       }
           //     }
           //   }
