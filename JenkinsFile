@@ -4,7 +4,9 @@ pipeline {
 
     environment {
         GIT_REPO_URL = 'https://github.com/pintop9/ecommerce-django-react.git'
-        GIT_BRANCH = 'main' // Change this if you're using a different branch
+        GIT_BRANCH = 'main'
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials-id')
+        DOCKERHUB_REPO = 'pintop9'
     }
 
     stages {
@@ -20,19 +22,28 @@ pipeline {
                 }
             }
         }
-
-stage('Build') {
+    
+        stage('Test Docker Login') {
             steps {
-                // Build project on Jenkins server.
                 script {
-                    // Activate virtual environment and run commands
                     sh '''
-                    cd backend
-                    python3 -m venv env
-                    . env/bin/activate
-                    pip install -r ../requirements.txt
-                    python ../manage.py runserver localhost:7000 &
-                '''
+                    echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin
+                    '''
+                }
+            }
+        }
+
+        stage('Build Docker Images') {
+            steps {
+                script {
+                    try {
+                        // Check the paths to Dockerfiles and adjust if necessary
+                        docker.build("${DOCKERHUB_REPO}/django-web", "-f Dockerfile .")
+                        docker.build("${DOCKERHUB_REPO}/django-db", "-f Dockerfile.db .")
+                    } catch (Exception e) {
+                        echo "Failed to build Docker images: ${e}"
+                        throw e
+                    }
                 }
             }
         }
@@ -61,12 +72,6 @@ stage('Build') {
           //                   description: 'Tests failed here',
           //                   issueTypeName: 'Bug'
           //               )
-                    // email
-                // emailext body: """The build status is ${currentBuild.currentResult}, on project ${env.JOB_NAME} find test report in this url: ${BUILD_URL}/My_20Contacts/""",
-                // subject: """You got a faild build/job ${env.JOB_NAME} - ${env.BUILD_NUMBER} from jenkins""", 
-                // to: 'gagi.shmagi@gmail.com'
-                
-                
           //       }
           //     }
           //   }
@@ -82,3 +87,15 @@ stage('Build') {
 
     }
 }
+
+                    // email
+                // emailext body: """The build status is ${currentBuild.currentResult}, on project ${env.JOB_NAME} find test report in this url: ${BUILD_URL}/My_20Contacts/""",
+                // subject: """You got a faild build/job ${env.JOB_NAME} - ${env.BUILD_NUMBER} from jenkins""", 
+                // to: 'gagi.shmagi@gmail.com'
+                
+                
+          //       }
+          //     }
+          //   }
+          // }
+
