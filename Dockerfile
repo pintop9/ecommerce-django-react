@@ -7,7 +7,7 @@ COPY ./backend /app/backend
 RUN cd backend
 
 RUN /bin/bash -c 'python -m venv env'
-RUN /bin/bash -c 'source env/Scripts/activate && cd ..'
+RUN /bin/bash -c 'source env/bin/activate && cd ..'
 COPY ./requirements.txt /app/requirements.txt
 COPY ./manage.py /app/manage.py
 COPY ./base /app/base
