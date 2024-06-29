@@ -57,7 +57,6 @@ resource "aws_instance" "jenkins" {
   user_data = <<-EOF
     #!/bin/bash
 
-    service_name="jenkins"
 
     sudo apt update
     sudo apt install -y git fontconfig openjdk-17-jre docker.io python3.10-venv
@@ -72,6 +71,7 @@ resource "aws_instance" "jenkins" {
     sudo apt update
     sudo apt install -y jenkins
     sudo usermod -aG docker jenkins
+    sudo service jenkins restart
 
     echo "Jenkins installed successfully..."
 

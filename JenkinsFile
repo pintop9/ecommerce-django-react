@@ -48,39 +48,51 @@ pipeline {
             }
         }
 
-        // stage('Running Tests') {
-        //     steps {
-        //         // Run Python tests with pytest for unit/integration/e2e tests.
-        //         sh """
-        //         . .venv/bin/activate
-        //         mkdir -p test-reports
-        //         pytest --html=test-reports/report.html
-        //         """
-          //  }
-          // post {
-          //   success {
-          //   // One or more steps need to be included within each condition's block.
-          //   }
-          //   failure {
-          //     // One or more steps need to be included within each condition's block.
-          //     stage('Send to Jira') {
-          //       steps {
-          //         // One or more steps need to be included within the steps block.
-          //         jiraCreateIssue(
-          //                   key: 'FDAP',
-          //                   summary: 'Issue created from Jenkins',
-          //                   description: 'Tests failed here',
-          //                   issueTypeName: 'Bug'
-          //               )
+               stage('Running Tests') {
+            steps {
+                // Run Python tests with pytest for unit/integration/e2e tests.
+                sh """
+                cd backend
+                python3 -m venv env
+                source env/bin/activate
+                mkdir -p test-reports
+                pytest --html=test-reports/report.html
+                """
+           }
+          post {
+            success {
+                steps {
+                    echo success
+                }
+            // One or more steps need to be included within each condition's block.
+            }
+            failure {
+              // One or more steps need to be included within each condition's block.
+                steps {
+                    echo fail
+                  // One or more steps need to be included within the steps block.
+                }
+              }
+            }
+          
+
+
+                    // email
+                // emailext body: """The build status is ${currentBuild.currentResult}, on project ${env.JOB_NAME} find test report in this url: ${BUILD_URL}/My_20Contacts/""",
+                // subject: """You got a faild build/job ${env.JOB_NAME} - ${env.BUILD_NUMBER} from jenkins""", 
+                // to: 'gagi.shmagi@gmail.com'
+                
+                
           //       }
           //     }
           //   }
           // }
 
+}
        // }
         // stage('publish report'){
         //     steps {
-        //         publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, keepAll: false, reportDir: '', reportFiles: 'report.html', reportName: 'Contacts Report', reportTitles: '', useWrapperFileDirectly: true]) 
+        //         publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, keepAll: false, reportDir: '', reportFiles: 'report.html', reportName: 'Django Report', reportTitles: '', useWrapperFileDirectly: true]) 
                 
         //     }
         // }
