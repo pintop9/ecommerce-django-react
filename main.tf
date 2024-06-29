@@ -71,6 +71,7 @@ resource "aws_instance" "jenkins" {
 
     sudo apt update
     sudo apt install -y jenkins
+    sudo usermod -aG docker jenkins
 
     echo "Jenkins installed successfully..."
 
