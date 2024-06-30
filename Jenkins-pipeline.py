@@ -3,9 +3,9 @@ import json
 import os
 
 
-host = "http://51.16.13.139:8080"
+host = "http://localhost:8082"
 username = "admin"
-password = "11d3b6aa2846cf748ccafd1fad86443cfe"
+password = "1190960e0e4edd6d4b0fc84bc58f440890"
 
 
 server = jenkins.Jenkins(host, username, password)

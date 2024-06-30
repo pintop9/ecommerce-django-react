@@ -6,7 +6,7 @@ ENV PYTHONUNBUFFERED=1
 WORKDIR /app
 
 COPY ./requirements.txt /app/
-RUN python -m venv env && \
+RUN python3 -m venv env && \
     . env/bin/activate && \
     pip install -r requirements.txt
 
