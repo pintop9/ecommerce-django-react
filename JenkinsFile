@@ -38,8 +38,10 @@ pipeline {
                     try {
                         docker.build("${DOCKERHUB_REPO}/django-web", "-f Dockerfile .")
                         docker.build("${DOCKERHUB_REPO}/django-db", "-f Dockerfile.db .")
+                        currentBuild.result = 'SUCCESS'
                     } catch (Exception e) {
                         echo "Failed to build Docker images: ${e}"
+                        currentBuild.result = 'FAILURE'
                         throw e
                     }
                 }
@@ -56,6 +58,7 @@ pipeline {
                         mkdir -p backend/test-reports
                         pytest --html=backend/test-reports/report.html
                         '''
+                        currentBuild.result = 'SUCCESS'
                     } catch (Exception e) {
                         currentBuild.result = 'FAILURE'
                     }
@@ -117,6 +120,7 @@ pipeline {
                 }
             }
         }
+
         stage('Deploy Containers') {
             when {
                 expression { currentBuild.result == 'SUCCESS' }
@@ -132,3 +136,4 @@ pipeline {
             }
         }
     }
+}
