@@ -34,6 +34,6 @@ def test_api_product_creation():
 
     response = client.post("/api/products/create/")
 
-    # data = response.data
+    # data = response.data #
 
     assert response.status_code == 401
